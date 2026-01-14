@@ -134,15 +134,29 @@ function showInfoPanel(uni) {
     const csSalary = uni.salary;
     const engSalary = getEngineeringSalary(uni);
     
+    const csMastersSalary = getMastersCSSalary(uni);
+    const engMastersSalary = getMastersEngSalary(uni);
+    
     nameEl.textContent = uni.name;
     salaryEl.innerHTML = `
         <div style="margin-bottom: 10px;">
             <div style="font-size: 0.9em; color: #aaa; margin-bottom: 3px;">Computer Science</div>
             <div style="color: ${getSalaryColor(csSalary)}">${formatSalary(csSalary, uni.isCanadian)}</div>
         </div>
-        <div>
+        <div style="margin-bottom: 10px;">
             <div style="font-size: 0.9em; color: #aaa; margin-bottom: 3px;">Engineering (Estimated)</div>
             <div style="color: ${getSalaryColor(engSalary)}">${formatSalary(engSalary, uni.isCanadian)}</div>
+        </div>
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+            <div style="font-size: 0.85em; color: #aaa; margin-bottom: 8px; font-weight: bold;">Masters Degrees</div>
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 0.9em; color: #aaa; margin-bottom: 3px;">CS (Masters)</div>
+                <div style="color: ${getSalaryColor(csMastersSalary)}">${formatSalary(csMastersSalary, uni.isCanadian)} <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+            </div>
+            <div>
+                <div style="font-size: 0.9em; color: #aaa; margin-bottom: 3px;">Engineering (Masters)</div>
+                <div style="color: ${getSalaryColor(engMastersSalary)}">${formatSalary(engMastersSalary, uni.isCanadian)} <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+            </div>
         </div>
     `;
     graduatesEl.textContent = `${uni.graduates.toLocaleString()} graduates`;
@@ -164,6 +178,8 @@ function addToComparison() {
         name: currentSelectedUni.name,
         csSalary: currentSelectedUni.salary,
         engSalary: getEngineeringSalary(currentSelectedUni),
+        csMastersSalary: getMastersCSSalary(currentSelectedUni),
+        engMastersSalary: getMastersEngSalary(currentSelectedUni),
         graduates: currentSelectedUni.graduates,
         isCanadian: currentSelectedUni.isCanadian
     };
@@ -202,6 +218,8 @@ function toggleTableComparison(uniName) {
         name: uni.name,
         csSalary: uni.salary,
         engSalary: getEngineeringSalary(uni),
+        csMastersSalary: getMastersCSSalary(uni),
+        engMastersSalary: getMastersEngSalary(uni),
         graduates: uni.graduates,
         isCanadian: uni.isCanadian
     };
@@ -255,6 +273,11 @@ function updateComparisonPanel() {
             <div style="margin-top: 8px;">
                 <div><strong>CS:</strong> <span style="color: ${getSalaryColor(uni.csSalary)}">${formatSalary(uni.csSalary)}</span></div>
                 <div><strong>Engineering:</strong> <span style="color: ${getSalaryColor(uni.engSalary)}">${formatSalary(uni.engSalary)}</span></div>
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
+                    <div style="font-size: 0.85em; color: #aaa; margin-bottom: 5px; font-weight: bold;">Masters:</div>
+                    <div><strong>CS (Masters):</strong> <span style="color: ${getSalaryColor(uni.csMastersSalary)}">${formatSalary(uni.csMastersSalary)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div><strong>Eng (Masters):</strong> <span style="color: ${getSalaryColor(uni.engMastersSalary)}">${formatSalary(uni.engMastersSalary)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                </div>
                 <div style="font-size: 0.9em; color: #aaa; margin-top: 5px;">${uni.graduates} graduates</div>
             </div>
         </div>
@@ -264,6 +287,8 @@ function updateComparisonPanel() {
     if (comparisonList.length > 0) {
         const avgCS = comparisonList.reduce((sum, u) => sum + u.csSalary, 0) / comparisonList.length;
         const avgEng = comparisonList.reduce((sum, u) => sum + u.engSalary, 0) / comparisonList.length;
+        const avgCSMasters = comparisonList.reduce((sum, u) => sum + u.csMastersSalary, 0) / comparisonList.length;
+        const avgEngMasters = comparisonList.reduce((sum, u) => sum + u.engMastersSalary, 0) / comparisonList.length;
         const maxCS = Math.max(...comparisonList.map(u => u.csSalary));
         const maxEng = Math.max(...comparisonList.map(u => u.engSalary));
         const minCS = Math.min(...comparisonList.map(u => u.csSalary));
@@ -274,6 +299,11 @@ function updateComparisonPanel() {
             <div style="font-size: 0.9em;">
                 <div><strong>Average CS:</strong> <span style="color: ${getSalaryColor(avgCS)}">${formatSalary(avgCS)}</span></div>
                 <div><strong>Average Engineering:</strong> <span style="color: ${getSalaryColor(avgEng)}">${formatSalary(avgEng)}</span></div>
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
+                    <div style="font-size: 0.85em; color: #aaa; margin-bottom: 5px; font-weight: bold;">Masters:</div>
+                    <div><strong>Avg CS (Masters):</strong> <span style="color: ${getSalaryColor(avgCSMasters)}">${formatSalary(avgCSMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div><strong>Avg Eng (Masters):</strong> <span style="color: ${getSalaryColor(avgEngMasters)}">${formatSalary(avgEngMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                </div>
                 <div style="margin-top: 10px;">
                     <div><strong>Highest CS:</strong> <span style="color: ${getSalaryColor(maxCS)}">${formatSalary(maxCS)}</span></div>
                     <div><strong>Highest Engineering:</strong> <span style="color: ${getSalaryColor(maxEng)}">${formatSalary(maxEng)}</span></div>
@@ -340,6 +370,9 @@ universityData.forEach(uni => {
     const marker = L.marker([uni.lat, uni.lng], { icon: icon });
     
     // Create popup content showing both CS and Engineering
+    const csMastersSalary = getMastersCSSalary(uni);
+    const engMastersSalary = getMastersEngSalary(uni);
+    
     const popupContent = `
         <div style="text-align: center; min-width: 220px; color: #1a1a1a;">
             <h3 style="margin: 0 0 15px 0; color: #4caf50; font-size: 16px;">${uni.name}</h3>
@@ -353,6 +386,21 @@ universityData.forEach(uni => {
                 <div style="font-size: 0.85em; color: #666; margin-bottom: 5px; font-weight: bold;">Engineering (Estimated)</div>
                 <div style="font-size: 22px; font-weight: bold; color: ${getSalaryColor(engSalary)};">
                     ${formatSalary(engSalary, uni.isCanadian)}
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                <div style="font-size: 0.8em; color: #666; margin-bottom: 8px; font-weight: bold;">Masters Degrees</div>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75em; color: #666; margin-bottom: 3px;">CS (Masters)</div>
+                    <div style="font-size: 18px; font-weight: bold; color: ${getSalaryColor(csMastersSalary)};">
+                        ${formatSalary(csMastersSalary, uni.isCanadian)} <span style="font-size: 0.7em; color: #999;">(est.)</span>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75em; color: #666; margin-bottom: 3px;">Engineering (Masters)</div>
+                    <div style="font-size: 18px; font-weight: bold; color: ${getSalaryColor(engMastersSalary)};">
+                        ${formatSalary(engMastersSalary, uni.isCanadian)} <span style="font-size: 0.7em; color: #999;">(est.)</span>
+                    </div>
                 </div>
             </div>
             <div style="color: #666; font-size: 13px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
