@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graduate Income Maps - CS & Engineering</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Marker Cluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        .header {
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-bottom: 2px solid #333;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            color: #e0e0e0;
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        
+        .map-section {
+            margin: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .map-section h2 {
+            color: #4caf50;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 8px;
+            background: #1a1a1a;
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 140px;
+            right: 20px;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            z-index: 1000;
+            max-width: 300px;
+            display: none;
+            border: 1px solid #444;
+        }
+        
+        .info-panel.active {
+            display: block;
+        }
+        
+        .info-panel h3 {
+            margin-bottom: 10px;
+            color: #4caf50;
+        }
+        
+        .info-panel .salary {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .info-panel .graduates {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #444;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            background: #555;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            z-index: 1000;
+            border: 1px solid #444;
+        }
+        
+        .legend h4 {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 0.85em;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            border: 2px solid #2a2a2a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .comparison-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            z-index: 2000;
+            max-width: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid #444;
+        }
+        
+        .comparison-panel.active {
+            display: block;
+        }
+        
+        .comparison-panel h3 {
+            color: #4caf50;
+            margin-bottom: 15px;
+        }
+        
+        .comparison-item {
+            background: #1a1a1a;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+        
+        .comparison-item h4 {
+            color: #4caf50;
+            margin-bottom: 5px;
+        }
+        
+        .comparison-item .remove-btn {
+            background: #d73027;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            font-size: 0.8em;
+        }
+        
+        .comparison-item .remove-btn:hover {
+            background: #b02020;
+        }
+        
+        .comparison-stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #444;
+        }
+        
+        .toggle-comparison {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 2000;
+        }
+        
+        .toggle-comparison:hover {
+            background: #45a049;
+        }
+        
+        .toggle-comparison.active {
+            background: #d73027;
+        }
+        
+        .clear-comparison {
+            background: #d73027;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .clear-comparison:hover {
+            background: #b02020;
+        }
+        
+        .table-section {
+            margin: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            overflow-x: auto;
+        }
+        
+        .table-section h2 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e0e0e0;
+        }
+        
+        thead {
+            background: #1a1a1a;
+            position: sticky;
+            top: 0;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            color: #e0e0e0;
+            border-bottom: 2px solid #444;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        th:hover {
+            background: #333;
+        }
+        
+        th.sortable {
+            position: relative;
+        }
+        
+        th.sortable::after {
+            content: ' ↕';
+            opacity: 0.5;
+            font-size: 0.8em;
+        }
+        
+        th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+            color: #4caf50;
+        }
+        
+        th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+            color: #4caf50;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #333;
+        }
+        
+        tbody tr {
+            transition: background 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: #333;
+        }
+        
+        .salary-cell {
+            font-weight: bold;
+        }
+        
+        .rank {
+            font-weight: bold;
+            color: #aaa;
+            width: 50px;
+        }
+        
+        .compare-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background 0.2s;
+        }
+        
+        .compare-btn:hover {
+            background: #45a049;
+        }
+        
+        .compare-btn.added {
+            background: #666;
+            cursor: default;
+        }
+        
+        .compare-btn.added:hover {
+            background: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Graduate Income Maps</h1>
+        <p>Compare Computer Science and Engineering starting salaries across North America</p>
+        <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.7;">
+            Data sourced from <a href="https://www.collegetransitions.com/dataverse/median-starting-salaries-computer-science/" target="_blank" style="color: #4caf50; text-decoration: underline;">College Transitions</a> (U.S. Department of Education College Scorecard)
+        </p>
+    </div>
+    
+    <div class="map-section">
+        <h2>Graduate Starting Salaries Map</h2>
+        <div id="map"></div>
+    </div>
+    
+    <div class="info-panel" id="infoPanel">
+        <button class="close-btn" onclick="closeInfoPanel()">×</button>
+        <h3 id="uniName"></h3>
+        <div class="salary" id="uniSalary"></div>
+        <div class="graduates" id="uniGraduates"></div>
+        <button onclick="addToComparison()" style="margin-top: 10px; padding: 8px 15px; background: #4caf50; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Add to Comparison</button>
+    </div>
+    
+    <button class="toggle-comparison" id="toggleComparison" onclick="toggleComparisonPanel()">Show Comparison (0)</button>
+    
+    <div class="comparison-panel" id="comparisonPanel">
+        <h3>University Comparison</h3>
+        <div id="comparisonList"></div>
+        <div class="comparison-stats" id="comparisonStats"></div>
+        <button class="clear-comparison" onclick="clearComparison()">Clear All</button>
+    </div>
+    
+    <div class="table-section">
+        <h2>University Rankings</h2>
+        <table id="universityTable">
+            <thead>
+                <tr>
+                    <th class="sortable" onclick="sortTable('rank', this)">Rank</th>
+                    <th class="sortable" onclick="sortTable('name', this)">University</th>
+                    <th class="sortable" onclick="sortTable('cs', this)">Computer Science</th>
+                    <th class="sortable" onclick="sortTable('eng', this)">Engineering</th>
+                    <th>Graduates</th>
+                    <th style="width: 120px;">Compare</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    
+    <script src="data.js"></script>
+    <script src="map.js"></script>
+</body>
+</html>
