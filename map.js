@@ -271,14 +271,15 @@ function updateComparisonPanel() {
             <button class="remove-btn" onclick="removeFromComparison(${index})">Remove</button>
             <h4>${uni.name}</h4>
             <div style="margin-top: 8px;">
-                <div><strong>CS:</strong> <span style="color: ${getSalaryColor(uni.csSalary)}">${formatSalary(uni.csSalary)}</span></div>
-                <div><strong>Engineering:</strong> <span style="color: ${getSalaryColor(uni.engSalary)}">${formatSalary(uni.engSalary)}</span></div>
+                <div style="margin-bottom: 8px;"><strong>Bachelors:</strong></div>
+                <div style="margin-left: 10px; margin-bottom: 5px;"><strong>CS:</strong> <span style="color: ${getSalaryColor(uni.csSalary)}">${formatSalary(uni.csSalary)}</span></div>
+                <div style="margin-left: 10px; margin-bottom: 10px;"><strong>Engineering:</strong> <span style="color: ${getSalaryColor(uni.engSalary)}">${formatSalary(uni.engSalary)}</span></div>
                 <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
-                    <div style="font-size: 0.85em; color: #aaa; margin-bottom: 5px; font-weight: bold;">Masters:</div>
-                    <div><strong>CS (Masters):</strong> <span style="color: ${getSalaryColor(uni.csMastersSalary)}">${formatSalary(uni.csMastersSalary)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
-                    <div><strong>Eng (Masters):</strong> <span style="color: ${getSalaryColor(uni.engMastersSalary)}">${formatSalary(uni.engMastersSalary)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Masters:</strong></div>
+                    <div style="margin-left: 10px; margin-bottom: 5px;"><strong>CS (Masters):</strong> <span style="color: ${getSalaryColor(uni.csMastersSalary)}">${formatSalary(uni.csMastersSalary)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div style="margin-left: 10px; margin-bottom: 10px;"><strong>Eng (Masters):</strong> <span style="color: ${getSalaryColor(uni.engMastersSalary)}">${formatSalary(uni.engMastersSalary)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
                 </div>
-                <div style="font-size: 0.9em; color: #aaa; margin-top: 5px;">${uni.graduates} graduates</div>
+                <div style="font-size: 0.9em; color: #aaa; margin-top: 8px; padding-top: 8px; border-top: 1px solid #444;">${uni.graduates} graduates</div>
             </div>
         </div>
     `).join('');
@@ -291,24 +292,35 @@ function updateComparisonPanel() {
         const avgEngMasters = comparisonList.reduce((sum, u) => sum + u.engMastersSalary, 0) / comparisonList.length;
         const maxCS = Math.max(...comparisonList.map(u => u.csSalary));
         const maxEng = Math.max(...comparisonList.map(u => u.engSalary));
+        const maxCSMasters = Math.max(...comparisonList.map(u => u.csMastersSalary));
+        const maxEngMasters = Math.max(...comparisonList.map(u => u.engMastersSalary));
         const minCS = Math.min(...comparisonList.map(u => u.csSalary));
         const minEng = Math.min(...comparisonList.map(u => u.engSalary));
+        const minCSMasters = Math.min(...comparisonList.map(u => u.csMastersSalary));
+        const minEngMasters = Math.min(...comparisonList.map(u => u.engMastersSalary));
         
         statsEl.innerHTML = `
             <h4 style="margin-bottom: 10px;">Statistics</h4>
             <div style="font-size: 0.9em;">
-                <div><strong>Average CS:</strong> <span style="color: ${getSalaryColor(avgCS)}">${formatSalary(avgCS)}</span></div>
-                <div><strong>Average Engineering:</strong> <span style="color: ${getSalaryColor(avgEng)}">${formatSalary(avgEng)}</span></div>
+                <div style="margin-bottom: 8px;"><strong>Bachelors Average:</strong></div>
+                <div style="margin-left: 10px; margin-bottom: 5px;"><strong>CS:</strong> <span style="color: ${getSalaryColor(avgCS)}">${formatSalary(avgCS)}</span></div>
+                <div style="margin-left: 10px; margin-bottom: 10px;"><strong>Engineering:</strong> <span style="color: ${getSalaryColor(avgEng)}">${formatSalary(avgEng)}</span></div>
                 <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
-                    <div style="font-size: 0.85em; color: #aaa; margin-bottom: 5px; font-weight: bold;">Masters:</div>
-                    <div><strong>Avg CS (Masters):</strong> <span style="color: ${getSalaryColor(avgCSMasters)}">${formatSalary(avgCSMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
-                    <div><strong>Avg Eng (Masters):</strong> <span style="color: ${getSalaryColor(avgEngMasters)}">${formatSalary(avgEngMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Masters Average:</strong></div>
+                    <div style="margin-left: 10px; margin-bottom: 5px;"><strong>CS (Masters):</strong> <span style="color: ${getSalaryColor(avgCSMasters)}">${formatSalary(avgCSMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div style="margin-left: 10px; margin-bottom: 10px;"><strong>Eng (Masters):</strong> <span style="color: ${getSalaryColor(avgEngMasters)}">${formatSalary(avgEngMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
                 </div>
-                <div style="margin-top: 10px;">
-                    <div><strong>Highest CS:</strong> <span style="color: ${getSalaryColor(maxCS)}">${formatSalary(maxCS)}</span></div>
-                    <div><strong>Highest Engineering:</strong> <span style="color: ${getSalaryColor(maxEng)}">${formatSalary(maxEng)}</span></div>
-                    <div><strong>Lowest CS:</strong> <span style="color: ${getSalaryColor(minCS)}">${formatSalary(minCS)}</span></div>
-                    <div><strong>Lowest Engineering:</strong> <span style="color: ${getSalaryColor(minEng)}">${formatSalary(minEng)}</span></div>
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #444;">
+                    <div style="margin-bottom: 5px;"><strong>Highest:</strong></div>
+                    <div style="margin-left: 10px; margin-bottom: 3px;">CS: <span style="color: ${getSalaryColor(maxCS)}">${formatSalary(maxCS)}</span></div>
+                    <div style="margin-left: 10px; margin-bottom: 3px;">Engineering: <span style="color: ${getSalaryColor(maxEng)}">${formatSalary(maxEng)}</span></div>
+                    <div style="margin-left: 10px; margin-bottom: 3px;">CS (Masters): <span style="color: ${getSalaryColor(maxCSMasters)}">${formatSalary(maxCSMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div style="margin-left: 10px; margin-bottom: 8px;">Eng (Masters): <span style="color: ${getSalaryColor(maxEngMasters)}">${formatSalary(maxEngMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div style="margin-top: 8px; margin-bottom: 5px;"><strong>Lowest:</strong></div>
+                    <div style="margin-left: 10px; margin-bottom: 3px;">CS: <span style="color: ${getSalaryColor(minCS)}">${formatSalary(minCS)}</span></div>
+                    <div style="margin-left: 10px; margin-bottom: 3px;">Engineering: <span style="color: ${getSalaryColor(minEng)}">${formatSalary(minEng)}</span></div>
+                    <div style="margin-left: 10px; margin-bottom: 3px;">CS (Masters): <span style="color: ${getSalaryColor(minCSMasters)}">${formatSalary(minCSMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
+                    <div style="margin-left: 10px;">Eng (Masters): <span style="color: ${getSalaryColor(minEngMasters)}">${formatSalary(minEngMasters)}</span> <span style="color: #aaa; font-size: 0.85em;">(est.)</span></div>
                 </div>
             </div>
         `;
