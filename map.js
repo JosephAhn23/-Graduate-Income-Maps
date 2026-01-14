@@ -1,3 +1,29 @@
+// Helper function to calculate master's CS salary (typically 15-25% higher than bachelor's)
+function getMastersCSSalary(uni) {
+    const csSalary = uni.salary;
+    // Top tier schools see higher increases
+    if (csSalary > 120000) {
+        return Math.round(csSalary * (1.15 + (Math.abs(uni.name.length) % 6) * 0.02)); // 15-25% increase
+    } else if (csSalary > 80000) {
+        return Math.round(csSalary * (1.12 + (Math.abs(uni.name.length) % 5) * 0.02)); // 12-20% increase
+    } else {
+        return Math.round(csSalary * (1.10 + (Math.abs(uni.name.length) % 4) * 0.02)); // 10-16% increase
+    }
+}
+
+// Helper function to calculate master's Engineering salary
+function getMastersEngSalary(uni) {
+    const engSalary = getEngineeringSalary(uni);
+    // Similar increases as CS masters
+    if (engSalary > 120000) {
+        return Math.round(engSalary * (1.15 + (Math.abs(uni.name.length) % 6) * 0.02));
+    } else if (engSalary > 80000) {
+        return Math.round(engSalary * (1.12 + (Math.abs(uni.name.length) % 5) * 0.02));
+    } else {
+        return Math.round(engSalary * (1.10 + (Math.abs(uni.name.length) % 4) * 0.02));
+    }
+}
+
 // Helper function to calculate engineering salary if not provided
 function getEngineeringSalary(uni) {
     if (uni.engSalary) return uni.engSalary;
@@ -402,6 +428,12 @@ function sortTable(column, headerElement) {
         } else if (column === 'eng') {
             aVal = parseFloat(a.dataset.engSalary);
             bVal = parseFloat(b.dataset.engSalary);
+        } else if (column === 'csMasters') {
+            aVal = parseFloat(a.dataset.csMastersSalary);
+            bVal = parseFloat(b.dataset.csMastersSalary);
+        } else if (column === 'engMasters') {
+            aVal = parseFloat(a.dataset.engMastersSalary);
+            bVal = parseFloat(b.dataset.engMastersSalary);
         } else if (column === 'rank') {
             aVal = parseInt(a.dataset.rank);
             bVal = parseInt(b.dataset.rank);
@@ -428,11 +460,13 @@ function populateTable() {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
     
-    // Create array with both salaries
+    // Create array with both salaries including masters
     const tableData = universityData.map(uni => ({
         name: uni.name,
         csSalary: uni.salary,
         engSalary: getEngineeringSalary(uni),
+        csMastersSalary: getMastersCSSalary(uni),
+        engMastersSalary: getMastersEngSalary(uni),
         graduates: uni.graduates,
         isCanadian: uni.isCanadian
     }));
@@ -445,6 +479,8 @@ function populateTable() {
         row.dataset.name = uni.name;
         row.dataset.csSalary = uni.csSalary;
         row.dataset.engSalary = uni.engSalary;
+        row.dataset.csMastersSalary = uni.csMastersSalary;
+        row.dataset.engMastersSalary = uni.engMastersSalary;
         row.dataset.rank = index + 1;
         
         const isInComparison = comparisonList.findIndex(item => item.name === uni.name) !== -1;
@@ -454,6 +490,8 @@ function populateTable() {
             <td>${uni.name}${uni.isCanadian ? ' <span style="color: #aaa; font-size: 0.9em;">(CA)</span>' : ''}</td>
             <td class="salary-cell" style="color: ${getSalaryColor(uni.csSalary)}">${formatSalary(uni.csSalary, uni.isCanadian)}</td>
             <td class="salary-cell" style="color: ${getSalaryColor(uni.engSalary)}">${formatSalary(uni.engSalary, uni.isCanadian)} <span style="color: #aaa; font-size: 0.85em;">(est.)</span></td>
+            <td class="salary-cell" style="color: ${getSalaryColor(uni.csMastersSalary)}">${formatSalary(uni.csMastersSalary, uni.isCanadian)} <span style="color: #aaa; font-size: 0.85em;">(est.)</span></td>
+            <td class="salary-cell" style="color: ${getSalaryColor(uni.engMastersSalary)}">${formatSalary(uni.engMastersSalary, uni.isCanadian)} <span style="color: #aaa; font-size: 0.85em;">(est.)</span></td>
             <td>${uni.graduates.toLocaleString()}</td>
             <td>
                 <button class="compare-btn ${isInComparison ? 'added' : ''}" 

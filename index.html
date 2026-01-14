@@ -263,6 +263,7 @@
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             overflow-x: auto;
+            width: calc(100% - 40px);
         }
         
         .table-section h2 {
@@ -405,8 +406,10 @@
                 <tr>
                     <th class="sortable" onclick="sortTable('rank', this)">Rank</th>
                     <th class="sortable" onclick="sortTable('name', this)">University</th>
-                    <th class="sortable" onclick="sortTable('cs', this)">Computer Science</th>
-                    <th class="sortable" onclick="sortTable('eng', this)">Engineering</th>
+                    <th class="sortable" onclick="sortTable('cs', this)">CS (Bachelors)</th>
+                    <th class="sortable" onclick="sortTable('eng', this)">Engineering (Bachelors)</th>
+                    <th class="sortable" onclick="sortTable('csMasters', this)">CS (Masters)</th>
+                    <th class="sortable" onclick="sortTable('engMasters', this)">Engineering (Masters)</th>
                     <th>Graduates</th>
                     <th style="width: 120px;">Compare</th>
                 </tr>
