@@ -34,6 +34,19 @@
             border-bottom: 2px solid #333;
         }
         
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            display: block;
+        }
+        
         .header h1 {
             font-size: 2em;
             margin-bottom: 5px;
@@ -370,6 +383,37 @@
 </head>
 <body>
     <div class="header">
+        <div class="logo-container">
+            <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Blue circle with gradient -->
+                <defs>
+                    <radialGradient id="circleGradient" cx="50%" cy="30%" r="70%">
+                        <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#2c5aa0;stop-opacity:1" />
+                    </radialGradient>
+                    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#b8860b;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="shadow">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                        <feOffset dx="0" dy="2" result="offsetblur"/>
+                        <feComponentTransfer>
+                            <feFuncA type="linear" slope="0.3"/>
+                        </feComponentTransfer>
+                        <feMerge>
+                            <feMergeNode/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <circle cx="50" cy="50" r="48" fill="url(#circleGradient)" stroke="#1e3a5f" stroke-width="1"/>
+                <!-- Gold S with gradient and shadow -->
+                <text x="50" y="50" font-family="Arial, sans-serif" font-size="60" font-weight="bold" 
+                      text-anchor="middle" dominant-baseline="central" 
+                      fill="url(#goldGradient)" filter="url(#shadow)">S</text>
+            </svg>
+        </div>
         <h1>🎓 Graduate Income Maps</h1>
         <p>Compare Computer Science and Engineering starting salaries across North America</p>
         <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.7;">
